@@ -1,0 +1,16 @@
+settings:
+  google_analytics_key:
+    alt: Google analytics key
+    value: 'UA-xxxxxx-x'
+    editable: true
+    deletable: false
+    validations:
+      presence: true
+  search_algorithm:
+    alt: Default search engine
+    value: 'ferret'
+    editable: false
+    deletable: true
+    validations:
+      inclusion: [ 'ferret' , 'sphinx' ]
+

@@ -1,6 +1,135 @@
-= settler
+= Settler
 
-Description goes here.
+Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations as well!
+
+== Requirements
+
+* Activerecord, tested with Rails 2.3.8.
+
+== Installation
+ 
+Install the rails-settings gem
+
+  gem install settler
+
+And include the gem in your apps config
+
+  config.gem 'settler'
+
+Or install as a plugin if you must.  But gems are cooler.
+
+  ./script/plugin install git://github.com/moiristo/settler.git
+
+== Setup
+
+* You must create the table used by the Setting model and install an initial configuration file. Simply run this command:
+  ruby script/generate settler
+
+* This will create a migration and will add a settler.yml configuration file in your config directory. Now just migrate the database:
+  rake db:migrate
+  
+* Next, you'll have to edit the settler.yml file, of which the details are described in the next section.
+
+* You can manually set the configuration file source and default namespace as follows:
+  * Settler.source = '/path/to/my/settler.yml'
+  * Settler.namespace = 'staging'
+  
+== Configuration
+
+The initial version of settler.yml contains example settings for every default Rails environment. A setting consists of at least a key and a value. Consider the following example:
+
+  google_analytics_key: 
+    alt: Google analytics key
+    value: 'UA-xxxxxx-x'
+    editable: true
+    deletable: false
+    validations:
+      presence: true
+
+In this case, 'google_analytics_key' is the key of the setting. Every nested property is either an attribute of the setting or a list of validations:
+
+* Alt, value, editable and deletable are attributes of the Setting model. If a Setting with a given key does not exist, it is created with the attributes found. Therefore, you can consider these attributes as the default values for the setting.
+* Validations are not part of every setting, but are loaded on validation of a Setting instance. They apply to the value of the setting. The following validations can be created:
+  * 'presence',  true/false.
+  * 'inclusion', followed by a YAML array (e.g. ['a','b','c']). Accepts a comma separated string as well.
+
+Note that you can use ERB in the configuration file if you need to. For example:
+
+  google_analytics_key: 
+    value: '<%= GOOGLE_ANALYTICS_KEY %>'
+
+will evaluate the GOOGLE_ANALYTICS_KEY constant.
+
+== Access settings
+
+* Accessors will be created for every defined setting, returning a Setting instance:
+
+  > Settler.google_analytics_key
+  Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
+  +----+----------------------+----------------------+------------+----------+-----------+-------------------------+-------------------------+
+  | id | key                  | alt                  | value      | editable | deletable | created_at              | updated_at              |
+  +----+----------------------+----------------------+------------+----------+-----------+-------------------------+-------------------------+
+  | 6  | google_analytics_key | Google analytics key | UA-xxxxx-x | true     | false     | 2010-09-22 15:04:06 UTC | 2010-09-22 15:04:06 UTC |
+  +----+----------------------+----------------------+------------+----------+-----------+-------------------------+-------------------------+
+  
+* You can access a setting's value quickly by using the index operator:
+
+  > Settler[:google_analytics_key]
+  Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
+  => "UA-xxxxx-x"
+
+== Changing / Destroying settings
+
+* As settings are represented by a Setting ActiveRecord model, you can just update and destroy them like you would update or destroy any AR model.
+
+* By default, settings will only be editable or deletable iff the corresponding attribute is set to 'true'. This will be enforced before saving or destroying a record:
+
+  > Settler.google_analytics_key.destroy
+  Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
+  => false
+  
+* The Setting model performs a soft delete when it is destroyed, meaning the record is not really destroyed, but just marked as deleted. The reason for doing this is because settings are reloaded from the configuration file when your application is (re)started, unless a setting is already available in the database. Therefore, it should know about all deleted settings, otherwise it would re-insert the
+deleted setting. If you want to enforce this behaviour, use Setting#delete instead.
+
+== Advanced usage
+  
+* When you define an inclusion validation on a setting, you can access these values for use in web forms by calling 'valid_values' on the setting:
+
+  > Settler.search_algorithm.valid_values
+  Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'search_algorithm') LIMIT 1
+  => ["ferret", "sphinx"]
+
+NB: This method returns nil when valid values cannot be found.
+
+* Overriding setting attributes in the configuration is not as easy as it seems, since YAML doesn't support nested node merges. When overriding specific setting attributes, you should therefore do something like this:
+
+  settings: &settings
+    google_analytics_key: &google
+      alt: Google analytics key
+      value: 'UA-xxxxxx-x'
+
+  development:
+    <<: *settings  
+    google_analytics_key:
+      <<: *google
+      alt: Development Google analytics key
+      value: 'UA-xxxxxx-1'    
+    
+* Report missing / raise missing
+  
+* You can tell Settler to report missing attributes:
+
+  Settler.report_missing = true
+
+This will output a warning to STDOUT and the Rails logger to notify you that a missing setting was requested.
+
+* It is also possible to raise an exception instead when requesting missing attributes:
+
+  Settler.raise_missing = true
+
+== To do
+
+- Add more validations, for now only 'presence' and 'inclusion' are supported.
 
 == Note on Patches/Pull Requests
  

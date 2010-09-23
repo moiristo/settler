@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "settler"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Settler manages global application settings in Rails}
+    gem.description = %Q{This gem is a combination of the Squeegy's rails-settings and Binarylogic's settingslogic gem, meaning it reads its configuration from a YAML file, but stores all settings in the database as well for on the fly changes.}
     gem.email = "r.j.delange@nedforce.nl"
     gem.homepage = "http://github.com/moiristo/settler"
     gem.authors = ["Reinier de Lange"]
