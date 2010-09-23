@@ -8,7 +8,7 @@ Settler can be used for defining application wide settings in Rails. Settings ar
 
 == Installation
  
-Install the rails-settings gem
+Install the gem
 
   gem install settler
 
