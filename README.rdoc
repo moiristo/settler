@@ -66,11 +66,11 @@ will evaluate the GOOGLE_ANALYTICS_KEY constant.
 
   > Settler.google_analytics_key
   Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
-  +----+----------------------+----------------------+------------+----------+-----------+-------------------------+-------------------------+
-  | id | key                  | alt                  | value      | editable | deletable | created_at              | updated_at              |
-  +----+----------------------+----------------------+------------+----------+-----------+-------------------------+-------------------------+
-  | 6  | google_analytics_key | Google analytics key | UA-xxxxx-x | true     | false     | 2010-09-22 15:04:06 UTC | 2010-09-22 15:04:06 UTC |
-  +----+----------------------+----------------------+------------+----------+-----------+-------------------------+-------------------------+
+  +----+----------------------+----------------------+------------+----------+-----------+
+  | id | key                  | alt                  | value      | editable | deletable |
+  +----+----------------------+----------------------+------------+----------+-----------+
+  | 6  | google_analytics_key | Google analytics key | UA-xxxxx-x | true     | false     |
+  +----+----------------------+----------------------+------------+----------+-----------+
   
 * You can access a setting's value quickly by using the index operator:
 
