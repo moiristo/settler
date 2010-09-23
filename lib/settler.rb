@@ -1,5 +1,6 @@
 require "yaml"
 require "erb"
+require "hash_extension"
 
 # Settler loads and manages application wide settings and provides an interface for retrieving settings. The Settler
 # object cannot be instantiated; all functionality is available on class level.
@@ -14,7 +15,7 @@ class Settler
       raise "Source settler.yml not set. Please create one and set it by using Settler.source = <file>. When using Rails, please create a settler.yml file in the config directory." unless source
       self.config = YAML.load(ERB.new(File.read(source)).result).to_hash
       self.config = config[namespace] if namespace
-      self.config.each{ |key, attributes| Setting.without_default_scope { Setting.find_or_create_by_key(key, attributes.only(:alt, :value, :editable, :deletable)) } }
+      self.config.each{ |key, attributes| Setting.without_default_scope { Setting.find_or_create_by_key(attributes.only(:alt, :value, :editable, :deletable).merge(:key => key)) } }
       Setting.all.each{ |s| key = s.key; Settler.class.send(:define_method, key){ Setting.find_by_key(key) } }
     end    
     

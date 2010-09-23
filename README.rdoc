@@ -4,7 +4,7 @@ Settler can be used for defining application wide settings in Rails. Settings ar
 
 == Requirements
 
-* Activerecord, tested with Rails 2.3.8.
+* Activerecord, tested with Rails 2.3.5 & 2.3.8.
 
 == Installation
  
