@@ -58,7 +58,7 @@ In this case, 'google_analytics_key' is the key of the setting. Every nested pro
     google_analytics_key: 
       value: '<%= GOOGLE_ANALYTICS_KEY %>'
 
-    will evaluate the GOOGLE_ANALYTICS_KEY constant.
+  will evaluate the GOOGLE_ANALYTICS_KEY constant.
 
 == Access settings
 
@@ -120,7 +120,7 @@ In this case, 'google_analytics_key' is the key of the setting. Every nested pro
 
       Settler.report_missing = true
 
-      This will output a warning to STDOUT and the Rails logger to notify you that a missing setting was requested.
+    This will output a warning to STDOUT and the Rails logger to notify you that a missing setting was requested.
 
   * It is also possible to raise an exception instead when requesting missing attributes:
 
