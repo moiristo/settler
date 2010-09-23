@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{settler}
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Reinier de Lange"]
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
      "lib/hash_extension.rb",
      "lib/setting.rb",
      "lib/settler.rb",
+     "settler.gemspec",
      "test/database.yml",
      "test/debug.log",
      "test/helper.rb",
