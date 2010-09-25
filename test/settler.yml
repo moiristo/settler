@@ -1,10 +1,11 @@
 settings:
   google_analytics_key:
-    alt: Google analytics key
+    alt: Google analytics key 
     value: 'UA-xxxxxx-x'
     editable: true
-    deletable: false
+    deletable: false    
     validations:
+      format: !ruby/regexp "/^UA-.{6}-.$/i" 
       presence: true
   search_algorithm:
     alt: Default search engine
@@ -13,4 +14,20 @@ settings:
     deletable: true
     validations:
       inclusion: [ 'ferret' , 'sphinx' ]
+  bool_value:
+    alt: A boolean that should be typecasted
+    value: true
+    typecast: boolean    
+  float_value:
+    alt: A float that should be typecasted
+    value: 0.25
+    typecast: float 
+  integer_value:
+    alt: An integer that should be typecasted
+    value: 3
+    typecast: integer           
+  custom_value:
+    alt: An integer that should be custom typecasted
+    value: 1
+    typecast: CustomTypecaster      
 

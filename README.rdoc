@@ -1,6 +1,6 @@
 = Settler
 
-Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations as well!
+Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well! 
 
 == Requirements
 
@@ -48,19 +48,14 @@ The initial version of settler.yml contains example settings for every default R
       validations:
         presence: true
 
-In this case, 'google_analytics_key' is the key of the setting. Every nested property is either an attribute of the setting or a list of validations:
+In this case, 'google_analytics_key' is the key of the setting. Every nested property is either an attribute of the setting or a list of validations. Alt, value, editable and deletable are attributes of the Setting model. If a Setting with a given key does not exist, it is created with the attributes found. Therefore, you can consider these attributes as the default values for the setting. See the validations section for more info on validations. 
 
-* Alt, value, editable and deletable are attributes of the Setting model. If a Setting with a given key does not exist, it is created with the attributes found. Therefore, you can consider these attributes as the default values for the setting.
-* Validations are not part of every setting, but are loaded on validation of a Setting instance. They apply to the value of the setting. The following validations can be created:
-  - 'presence',  true/false.
-  - 'inclusion', followed by a YAML array (e.g. ['a','b','c']). Accepts a comma separated string as well.
-
-  Note that you can use ERB in the configuration file if you need to. For example:
+Note that you can use ERB in the configuration file if you need to. For example:
 
     google_analytics_key: 
       value: '<%= GOOGLE_ANALYTICS_KEY %>'
 
-  will evaluate the GOOGLE_ANALYTICS_KEY constant.
+will evaluate the GOOGLE_ANALYTICS_KEY constant.
 
 == Access settings
 
@@ -79,10 +74,59 @@ In this case, 'google_analytics_key' is the key of the setting. Every nested pro
     >> Settler[:google_analytics_key]
     Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
     => "UA-xxxxx-x"
+    
+* Some named scopes for finding setting are available that may be useful as well:
+  * Setting.editable: returns all editable settings.
+  * Setting.deletable: returns all deletable settings.
+  * Setting.deleted: returns all deleted settings.
+
+== Typecasting
+
+* Setting values can be typecasted to several types. This can easily be done by adding a 'typecast' property to the settler.yml. For example:
+
+    float_value:
+      alt: A float that should be typecasted
+      value: '0.25'
+      typecast: float
+  
+  will ensure that the value returned by this setting will always be a float (0.25) instead if the string representation of a float. 
+  
+* The following 'typecasters' are available by default:
+  * integer
+  * float
+  * boolean
+
+  Note: the boolean typecaster will yield true when the value is '1','t' or 'true' (case ignored), false otherwise.
+
+* It is possible to create and use your own typecaster instead of the built in typecasters. A custom type caster should look like this:
+
+    class CustomTypecaster < Typecaster
+      def typecast(value)
+        # typecast and return value
+      end
+    end
+
+When you require this class in your application, you can easily use your typecaster by specifying its class name in the settler configuration:
+
+    custom_value:
+      alt: An integer that should be custom typecasted
+      value: 1
+      typecast: CustomTypecaster      
+    
+== Validations
+
+* Validations are not stored in every setting, but are loaded on validation of a Setting instance. They apply to the value of the setting. The following validations can be created:
+  - 'presence',  true/false.
+  - 'inclusion', followed by a YAML array (e.g. ['a','b','c']). Accepts a comma separated string as well.
+  - 'format', followed by a YAML regex (e.g. !ruby/regexp "/^UA-.{6}-.$/i"). String can be given as well, which will be converted to a regex. Note that you will not be able to pass regex modifiers in that case, therefore the YAML regex syntax is recommended.
 
 == Changing / Destroying settings
 
 * As settings are represented by a Setting ActiveRecord model, you can just update and destroy them like you would update or destroy any AR model.
+
+* The 'key' attribute is read only as it should never be changed through your application.
+
+* The 'editable', 'deletable' and 'deleted' attributes are protected from mass assignment using attr_protected.
 
 * By default, settings will only be editable or deletable iff the corresponding attribute is set to 'true'. This will be enforced before saving or destroying a record:
 
@@ -127,10 +171,6 @@ In this case, 'google_analytics_key' is the key of the setting. Every nested pro
   * It is also possible to raise an exception instead when requesting missing attributes:
 
       Settler.raise_missing = true
-
-== To do
-
-* Add more validations, for now only 'presence' and 'inclusion' are supported.
 
 == Note on Patches/Pull Requests
  

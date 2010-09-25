@@ -11,7 +11,7 @@ class TestSettler < Test::Unit::TestCase
   end
     
   def test_should_load_settings
-    assert_equal ['google_analytics_key', 'search_algorithm'], Settler.settings
+    assert_equal ["bool_value", "custom_value", "float_value", "google_analytics_key", "integer_value", "search_algorithm"], Settler.settings(:order => :key) 
   end
   
   def test_should_find_setting_value
@@ -20,7 +20,7 @@ class TestSettler < Test::Unit::TestCase
   end
   
   def test_should_get_validations_for_setting
-    assert_equal({'presence' => true}, Settler.validations_for(:google_analytics_key))
+    assert Settler.validations_for(:google_analytics_key).keys.include?('presence')
     assert_equal({"inclusion"=>["ferret", "sphinx"]}, Settler.validations_for(:search_algorithm))
   end
   
@@ -31,7 +31,7 @@ class TestSettler < Test::Unit::TestCase
   end
   
   def test_should_report_or_raise_missing    
-    Settler.report_missing = true    
+    #Settler.report_missing = true    
     Settler.raise_missing = true
     
     assert_raise RuntimeError do
@@ -61,8 +61,68 @@ class TestSettler < Test::Unit::TestCase
   
   def test_should_update_editable_setting
     editable_setting = Settler.google_analytics_key
-    assert editable_setting.update_attributes(:value => 'new_value')
-    assert_equal 'new_value', Settler[:google_analytics_key]
-  end  
+    assert editable_setting.update_attributes(:value => 'UA-xxxxxx-1')
+    assert_equal 'UA-xxxxxx-1', Settler[:google_analytics_key]
+  end
+  
+  def test_key_should_be_readonly_attribute
+    setting = Settler.google_analytics_key
+    setting.update_attribute(:key, 'new_key')
+    assert_equal 'google_analytics_key', setting.reload.key
+  end
+  
+  def test_should_not_update_protected_attributes
+    setting = Settler.google_analytics_key
+    assert setting.update_attributes(:key => 'new_key', :alt => 'new_alt', :value => 'UA-xxxxxx-1', :editable => false, :deletable => true, :deleted => true)
+    setting.reload
+    assert_equal 'google_analytics_key', setting.key
+    assert_equal 'new_alt', setting.alt         
+    assert_equal 'UA-xxxxxx-1', setting.value    
+    assert setting.editable?        
+    assert !setting.deletable?
+    assert_nil setting.deleted    
+  end
+  
+  def test_should_get_scopes
+    assert_equal [Settler.google_analytics_key], Setting.editable
+    assert_equal [Settler.search_algorithm], Setting.deletable
+
+    assert_equal [], Setting.deleted        
+    deletable_setting = Settler.search_algorithm
+    assert deletable_setting.destroy
+    assert_equal [deletable_setting], Setting.deleted    
+  end
+  
+  def test_should_typecast
+    require 'custom_typecaster'
+    assert_equal 3, Settler.integer_value.value
+    assert_equal 0.25, Settler.float_value.value
+    assert_equal true, Settler.bool_value.value        
+    assert_equal 'custom value', Settler.custom_value.value                  
+  end
+  
+  def test_boolean_typecaster
+    bool_setting = Settler.bool_value
+    assert_equal true, bool_setting.value
+    bool_setting.update_attribute(:value, false)      
+    assert_equal false, bool_setting.value    
+    bool_setting.update_attribute(:value, 'f')      
+    assert_equal false, bool_setting.value      
+    bool_setting.update_attribute(:value, 'bla')      
+    assert_equal false, bool_setting.value          
+    bool_setting.update_attribute(:value, 't')      
+    assert_equal true, bool_setting.value     
+    bool_setting.update_attribute(:value, 'true')      
+    assert_equal true, bool_setting.value  
+    bool_setting.update_attribute(:value, 'TrUe')      
+    assert_equal true, bool_setting.value    
+    bool_setting.update_attribute(:value, 'tr')      
+    assert_equal false, bool_setting.value        
+  end
+  
+  def test_should_validate_format
+    setting = Settler.google_analytics_key
+    assert !setting.update_attributes(:value => 'invalid_format')    
+  end
   
 end

@@ -1,6 +1,6 @@
-require "yaml"
-require "erb"
-require "hash_extension"
+require 'yaml'
+require 'erb'
+require 'hash_extension'
 
 # Settler loads and manages application wide settings and provides an interface for retrieving settings. The Settler
 # object cannot be instantiated; all functionality is available on class level.
@@ -13,9 +13,17 @@ class Settler
     # Loads the settler configuration from settler.yml and defines methods for retrieving the found settings.
     def load!    
       raise "Source settler.yml not set. Please create one and set it by using Settler.source = <file>. When using Rails, please create a settler.yml file in the config directory." unless source
+      
       self.config = YAML.load(ERB.new(File.read(source)).result).to_hash
       self.config = config[namespace] if namespace
-      self.config.each{ |key, attributes| Setting.without_default_scope { Setting.find_or_create_by_key(attributes.only(:alt, :value, :editable, :deletable).merge(:key => key)) } }
+      self.config.each do  |key, attributes| 
+        Setting.without_default_scope do 
+          Setting.find_or_create_by_key(attributes.only(:alt, :value).merge(:key => key)) do |s|
+             s.editable = attributes['editable']
+             s.deletable = attributes['deletable']
+          end
+        end 
+      end
       Setting.all.each{ |s| key = s.key; Settler.class.send(:define_method, key){ Setting.find_by_key(key) } }
     end    
     
@@ -26,9 +34,9 @@ class Settler
     end
     
     # Returns an array of all setting keys
-    def settings
+    def settings(options = {})
       Settler.load! if config.nil?
-      Setting.all.map(&:key)
+      Setting.all(:order => options[:order]).map(&:key)
     end  
     
     # Returns a list of validations to perform on a setting.
@@ -37,6 +45,12 @@ class Settler
       Settler.load! if config.nil?
       (setting = config[key.to_s]) ? setting['validations'] || {} : {}
     end
+    
+    # Returns the typecast for a setting (if any).
+    def typecast_for(key)
+      Settler.load! if config.nil?
+      (setting = config[key.to_s]) ? setting['typecast'] || nil : nil
+    end    
     
     # Overrides the normal method_missing to return nil for non-existant settings. The behaviour of this method
     # depends on the boolean attributes raise_missing and report_missing.

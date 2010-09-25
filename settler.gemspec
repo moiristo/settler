@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Reinier de Lange"]
-  s.date = %q{2010-09-23}
+  s.date = %q{2010-09-26}
   s.description = %q{This gem is a combination of the Squeegy's rails-settings and Binarylogic's settingslogic gem, meaning it reads its configuration from a YAML file, but stores all settings in the database as well for on the fly changes.}
   s.email = %q{r.j.delange@nedforce.nl}
   s.extra_rdoc_files = [
@@ -30,7 +30,9 @@ Gem::Specification.new do |s|
      "lib/hash_extension.rb",
      "lib/setting.rb",
      "lib/settler.rb",
+     "lib/type_casters.rb",
      "settler.gemspec",
+     "test/custom_typecaster.rb",
      "test/database.yml",
      "test/helper.rb",
      "test/schema.rb",
@@ -43,7 +45,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Settler manages global application settings in Rails}
   s.test_files = [
-    "test/helper.rb",
+    "test/custom_typecaster.rb",
+     "test/helper.rb",
      "test/schema.rb",
      "test/test_settler.rb"
   ]
