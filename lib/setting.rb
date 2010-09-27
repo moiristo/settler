@@ -76,7 +76,7 @@ protected
   def setting_validations
     errors.add(:value, I18n.t(:blank, :scope => 'activerecord.errors.messages')) if validators['presence'] && ['1','true',true].include?(validators['presence']) && self.value.nil?
     errors.add(:value, I18n.t(:inclusion, :scope => 'activerecord.errors.messages')) if valid_values && !valid_values.include?(self.value)
-    errors.add(:value, I18n.t(:format, :scope => 'activerecord.errors.messages')) if validators['format'] && !(Regexp.new(validators['format']) =~ self.value)
+    errors.add(:value, I18n.t(:invalid, :scope => 'activerecord.errors.messages')) if validators['format'] && !(Regexp.new(validators['format']) =~ self.value)
   end
   
   # Retrieves all validators defined for this setting.
