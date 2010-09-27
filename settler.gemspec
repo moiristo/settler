@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{settler}
-  s.version = "1.1.0"
+  s.version = "1.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Reinier de Lange"]
-  s.date = %q{2010-09-26}
+  s.date = %q{2010-09-27}
   s.description = %q{This gem is a combination of the Squeegy's rails-settings and Binarylogic's settingslogic gem, meaning it reads its configuration from a YAML file, but stores all settings in the database as well for on the fly changes.}
   s.email = %q{r.j.delange@nedforce.nl}
   s.extra_rdoc_files = [
