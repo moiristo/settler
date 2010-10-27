@@ -1,8 +1,6 @@
 require 'helper'
 
 class TestSettler < Test::Unit::TestCase
-  load_schema
-  
   def setup
     Setting.without_default_scope{ Setting.delete_all }
     Settler.source = File.dirname(__FILE__) + '/settler.yml'
@@ -55,9 +53,17 @@ class TestSettler < Test::Unit::TestCase
   
   def test_should_not_update_uneditable_setting
     uneditable_setting = Settler.search_algorithm
-    assert !uneditable_setting.update_attributes(:value => 'new_value')
+    assert !uneditable_setting.update_attributes(:value => 'sphinx')
+    assert Setting.rails3 ? uneditable_setting.errors[:value].any? : uneditable_setting.errors.on(:value).present?
     assert_equal 'ferret', Settler[:search_algorithm]
   end
+  
+  def test_should_manually_update_uneditable_setting
+    uneditable_setting = Settler.search_algorithm
+    assert uneditable_setting.update_attribute(:value, 'sphinx')
+    assert Setting.rails3 ? uneditable_setting.errors[:value].empty? : uneditable_setting.errors.on(:value).nil?
+    assert_equal 'sphinx', Settler[:search_algorithm]
+  end  
   
   def test_should_update_editable_setting
     editable_setting = Settler.google_analytics_key
@@ -67,7 +73,7 @@ class TestSettler < Test::Unit::TestCase
   
   def test_key_should_be_readonly_attribute
     setting = Settler.google_analytics_key
-    setting.update_attribute(:key, 'new_key')
+    setting.update_attribute(:key, 'new_key') rescue nil
     assert_equal 'google_analytics_key', setting.reload.key
   end
   
@@ -124,5 +130,17 @@ class TestSettler < Test::Unit::TestCase
     setting = Settler.google_analytics_key
     assert !setting.update_attributes(:value => 'invalid_format')    
   end
+  
+  def test_should_reset_setting
+    uneditable_setting = Settler.search_algorithm
+    assert uneditable_setting.update_attribute(:deletable, false)
+    assert uneditable_setting.update_attribute(:value, 'sphinx')
+    assert_equal 'sphinx', Settler[:search_algorithm]
+    assert !uneditable_setting.deletable?
+    
+    uneditable_setting.reset!
+    assert_equal 'ferret', Settler[:search_algorithm] 
+    assert uneditable_setting.deletable?    
+  end  
   
 end

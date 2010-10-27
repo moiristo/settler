@@ -5,12 +5,10 @@ require 'pp'
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
-require 'FileUtils'
-
 gem "activerecord"
+require 'fileutils'
 require 'active_record'
-
-require File.dirname(__FILE__) + '/../init.rb'
+require 'active_support/core_ext/class/attribute_accessors'
 
 def load_schema
   config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
@@ -35,4 +33,7 @@ def load_schema
   ActiveRecord::Base.establish_connection(config[db_adapter])
   load(File.dirname(__FILE__) + "/schema.rb")
 end  
+
+load_schema
+require File.dirname(__FILE__) + '/../init.rb'
 

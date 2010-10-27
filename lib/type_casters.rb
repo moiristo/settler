@@ -13,7 +13,7 @@ class Typecaster
   # Returns the first typecaster from the list of typecasters that is able to typecast the passed type.
   def self.typecaster_for(typecast)
     typecaster = typecast.constantize.instance rescue nil
-    typecaster.present? && typecaster.is_a?(Typecaster) ? typecaster : registered_typecasters.detect{|tc| tc.type == typecast } || self.new
+    typecaster.present? && typecaster.is_a?(Typecaster) ? typecaster : registered_typecasters.detect{|tc| tc.type == typecast } || self.instance
   end
   
   # Subclasses should implement this method and return the type of data it can typecast.

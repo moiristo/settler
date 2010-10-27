@@ -2,19 +2,23 @@ require 'type_casters'
 
 # The Setting class is an AR model that encapsulates a Settler setting. The key if the setting is the only required attribute.\
 class Setting < ActiveRecord::Base  
+  cattr_accessor :rails3
+  self.rails3 = defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::MAJOR >= 3  
+
   attr_readonly   :key
   attr_protected  :editable, :deletable, :deleted  
   
-  before_update :ensure_editable
-  
   validates_presence_of :key  
   validate :setting_validations
+  if rails3 then validate(:ensure_editable, :on => :update) else validate_on_update(:ensure_editable) end
   
   serialize :value
   
   default_scope :conditions => ['deleted = ? or deleted IS NULL', false]
-  named_scope :editable, :conditions => { :editable => true }
-  named_scope :deletable, :conditions => { :deletable => true }  
+  
+  scope_method = rails3 ? :scope : :named_scope
+  send scope_method, :editable, :conditions => { :editable => true }
+  send scope_method, :deletable, :conditions => { :deletable => true }  
   
   # Returns the value, typecasted if a typecaster is available.
   def value
@@ -60,6 +64,16 @@ class Setting < ActiveRecord::Base
     end
   end
   
+  # Resets this setting to the default stored in the settler configuration
+  def reset!
+    defaults = Settler.config[self.key]
+    self.alt = defaults['alt']
+    self.value = defaults['value']
+    self.editable = defaults['editable']
+    self.deletable = defaults['deletable']    
+    rails3 ? save(:validate => false) : save(false)
+  end
+  
   # Can be used to get *all* settings, including deleted settings.
   def self.without_default_scope &block
     Setting.with_exclusive_scope(&block)
@@ -68,15 +82,17 @@ class Setting < ActiveRecord::Base
   # Deleted scope is specified as a method as it needs to be an exclusive scope
   def self.deleted
     Setting.without_default_scope{ Setting.all :conditions => { :deleted => true } }
-  end
+  end 
   
-protected
+private
 
   # Performs instance validations as defined in the settler configuration.
   def setting_validations
-    errors.add(:value, I18n.t(:blank, :scope => 'activerecord.errors.messages')) if validators['presence'] && ['1','true',true].include?(validators['presence']) && self.value.nil?
-    errors.add(:value, I18n.t(:inclusion, :scope => 'activerecord.errors.messages')) if valid_values && !valid_values.include?(self.value)
-    errors.add(:value, I18n.t(:invalid, :scope => 'activerecord.errors.messages')) if validators['format'] && !(Regexp.new(validators['format']) =~ self.value)
+    if errors.empty?
+      errors.add(:value, I18n.t(:blank, :scope => 'activerecord.errors.messages')) if validators['presence'] && ['1','true',true].include?(validators['presence']) && self.value.nil?
+      errors.add(:value, I18n.t(:inclusion, :scope => 'activerecord.errors.messages')) if valid_values && !valid_values.include?(self.value)
+      errors.add(:value, I18n.t(:invalid, :scope => 'activerecord.errors.messages')) if validators['format'] && !(Regexp.new(validators['format']) =~ self.value)
+    end
   end
   
   # Retrieves all validators defined for this setting.
@@ -89,7 +105,9 @@ protected
     @typecaster ||= Typecaster.typecaster_for(typecast)    
   end
   
-  # Before_update filter to ensure uneditable settings cannot be updated.
-  def ensure_editable; return false unless editable? end  
+  # Ensures uneditable settings cannot be updated.
+  def ensure_editable
+    errors.add(:value, I18n.t('settler.errors.editable', :default => 'cannot be changed')) if value_changed? && !editable? 
+  end 
     
 end

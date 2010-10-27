@@ -8,7 +8,7 @@ class Settler
   private_class_method :new
   cattr_accessor  :config, :raise_missing, :report_missing  
   cattr_writer    :namespace, :source
-  
+
   class << self
     # Loads the settler configuration from settler.yml and defines methods for retrieving the found settings.
     def load!    

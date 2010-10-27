@@ -4,7 +4,7 @@ Settler can be used for defining application wide settings in Rails. Settings ar
 
 == Requirements
 
-* Activerecord, tested with Rails 2.3.5 & 2.3.8.
+* Activerecord, tested with Rails 2.3.5, 2.3.8 & rails 3.
 
 == Installation
  
@@ -133,7 +133,16 @@ When you require this class in your application, you can easily use your typecas
     >> Settler.google_analytics_key.destroy
     Setting Load (0.7ms)   SELECT \* FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
     => false
-  
+    
+* As of version 1.2, settings can always be updated when using the update_attribute method. Before that version, a before_filter was used instead of a validation. Note that you can change the validation message for settings that cannot be changed by adding the key 'settler.errors.editable' to I18n. Defaults to: 'cannot be changed'.
+
+* Settings can be reset to the values defined in the configuration file by calling reset!: 
+
+    >> Settler.google_analytics_key.reset!
+    => true
+
+  Note that this will always work regardless of the 'editable' attribute, so be careful when using this method!
+    
 * The Setting model performs a soft delete when it is destroyed, meaning the record is not really destroyed, but just marked as deleted. The reason for doing this is because settings are reloaded from the configuration file when your application is (re)started, unless a setting is already available in the database. Therefore, it should know about all deleted settings, otherwise it would re-insert the deleted setting. If you want to enforce this behaviour, use Setting#delete instead.
 
 == Advanced usage
