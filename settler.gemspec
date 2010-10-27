@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{settler}
-  s.version = "1.1.1"
+  s.version = "1.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Reinier de Lange"]
-  s.date = %q{2010-09-27}
+  s.date = %q{2010-10-27}
   s.description = %q{This gem is a combination of the Squeegy's rails-settings and Binarylogic's settingslogic gem, meaning it reads its configuration from a YAML file, but stores all settings in the database as well for on the fly changes.}
   s.email = %q{r.j.delange@nedforce.nl}
   s.extra_rdoc_files = [
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/moiristo/settler}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Settler manages global application settings in Rails}
   s.test_files = [
     "test/custom_typecaster.rb",
@@ -55,7 +55,7 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
     else
     end
   else
