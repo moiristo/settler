@@ -194,4 +194,4 @@ When you require this class in your application, you can easily use your typecas
 
 == Copyright
 
-Copyright (c) 2010 Reinier de Lange. See LICENSE for details.
+Copyright (c) 2011 Reinier de Lange. See LICENSE for details.
