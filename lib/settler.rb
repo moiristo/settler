@@ -20,10 +20,11 @@ class Settler
       self.config = config[namespace] if namespace
       self.config.each do  |key, attributes| 
         Setting.without_default_scope do 
-          Setting.find_or_create_by_key(attributes.only(:alt, :value).merge(:key => key)) do |s|
+          setting = Setting.find_or_create_by_key(attributes.only(:alt, :value).merge(:key => key)) do |s|
              s.editable = attributes['editable']
              s.deletable = attributes['deletable']
           end
+          p "[Settler] Validation failed for setting '#{setting.key}': #{setting.errors.full_messages.to_sentence}" if !setting.valid?
         end 
       end
       Setting.all.each{ |s| key = s.key; Settler.class.send(:define_method, key){ Setting.find_by_key(key) } }

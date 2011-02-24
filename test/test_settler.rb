@@ -51,7 +51,7 @@ class TestSettler < Test::Unit::TestCase
     assert_nil Settler.search_algorithm
   end
   
-  def test_should_delete_destroy_setting
+  def test_should_delete_destroyed_setting
     deletable_setting = Settler.search_algorithm
     assert deletable_setting.destroy
     deletable_setting.delete
@@ -59,6 +59,15 @@ class TestSettler < Test::Unit::TestCase
     Settler.load!
     assert Settler.search_algorithm.present?
   end  
+
+  def test_should_delete_all_destroyed_setting
+    deletable_setting = Settler.search_algorithm
+    assert deletable_setting.destroy
+    Setting.delete_all
+    assert Setting.deleted.empty?
+    Settler.load!
+    assert Settler.search_algorithm.present?
+  end    
   
   def test_should_not_update_uneditable_setting
     uneditable_setting = Settler.search_algorithm
