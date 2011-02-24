@@ -51,6 +51,15 @@ class TestSettler < Test::Unit::TestCase
     assert_nil Settler.search_algorithm
   end
   
+  def test_should_delete_destroy_setting
+    deletable_setting = Settler.search_algorithm
+    assert deletable_setting.destroy
+    deletable_setting.delete
+    assert Setting.deleted.empty?
+    Settler.load!
+    assert Settler.search_algorithm.present?
+  end  
+  
   def test_should_not_update_uneditable_setting
     uneditable_setting = Settler.search_algorithm
     assert !uneditable_setting.update_attributes(:value => 'sphinx')
@@ -142,5 +151,13 @@ class TestSettler < Test::Unit::TestCase
     assert_equal 'ferret', Settler[:search_algorithm] 
     assert uneditable_setting.deletable?    
   end  
+  
+  def test_should_undelete_when_resetting
+    deleted_setting = Settler.search_algorithm
+    assert deleted_setting.destroy
+    assert Setting.deleted.include?(deleted_setting)
+    deleted_setting.reset!
+    assert !Setting.deleted.include?(deleted_setting)    
+  end
   
 end

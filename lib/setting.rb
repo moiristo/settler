@@ -70,6 +70,11 @@ class Setting < ActiveRecord::Base
     end
   end
   
+  # Overrides the delete method to ensure the default scope is not passed in the query
+  def delete
+    Setting.without_default_scope{ super }
+  end  
+  
   # Resets this setting to the default stored in the settler configuration
   def reset!
     defaults = Settler.config[self.key]
@@ -77,6 +82,7 @@ class Setting < ActiveRecord::Base
     self.value = defaults['value']
     self.editable = defaults['editable']
     self.deletable = defaults['deletable']    
+    self.deleted = false    
     rails3 ? save(:validate => false) : save(false)
   end
   
