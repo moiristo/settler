@@ -101,9 +101,9 @@ private
   # Performs instance validations as defined in the settler configuration.
   def setting_validations
     if errors.empty?
-      errors.add(:value, I18n.t(:blank, :scope => 'activerecord.errors.messages')) if validators['presence'] && ['1','true',true].include?(validators['presence']) && self.value.nil?
-      errors.add(:value, I18n.t(:inclusion, :scope => 'activerecord.errors.messages')) if valid_values && !valid_values.include?(self.value)
-      errors.add(:value, I18n.t(:invalid, :scope => 'activerecord.errors.messages')) if validators['format'] && !(Regexp.new(validators['format']) =~ self.value)
+      errors.add(:value, :blank) if validators['presence'] && ['1','true',true].include?(validators['presence']) && self.value.nil?
+      errors.add(:value, :inclusion) if valid_values && !valid_values.include?(self.value)
+      errors.add(:value, :invalid) if validators['format'] && !(Regexp.new(validators['format']) =~ self.value)
     end
   end
   
