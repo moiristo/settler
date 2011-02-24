@@ -1,6 +1,6 @@
 class SettlerGenerator < Rails::Generator::NamedBase
   def initialize(runtime_args, runtime_options = {})
-    runtime_args << 'add_settings_table' if runtime_args.empty?
+    runtime_args << 'create_settings_table' if runtime_args.empty?
     super
   end
 

@@ -24,7 +24,8 @@ Or install as a plugin if you must.  But gems are cooler.
 
 * You must create the table used by the Setting model and install an initial configuration file. Simply run this command:
   
-    ruby script/generate settler
+    rails2: ruby script/generate settler
+    rails3: rails g settler
 
 * This will create a migration and will add a settler.yml configuration file in your config directory. Now just migrate the database:
   

@@ -1,4 +1,5 @@
 require 'type_casters'
+require 'default_scope_patch' if defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::MAJOR >= 3
 
 # The Setting class is an AR model that encapsulates a Settler setting. The key if the setting is the only required attribute.\
 class Setting < ActiveRecord::Base  
@@ -10,11 +11,16 @@ class Setting < ActiveRecord::Base
   
   validates_presence_of :key  
   validate :setting_validations
-  if rails3 then validate(:ensure_editable, :on => :update) else validate_on_update(:ensure_editable) end
   
   serialize :value
   
-  default_scope :conditions => ['deleted = ? or deleted IS NULL', false]
+  if rails3 
+    validate(:ensure_editable, :on => :update)
+    default_scope lambda{ where(['deleted = ? or deleted IS NULL', false]) }
+  else 
+    validate_on_update(:ensure_editable) 
+    default_scope :conditions => ['deleted = ? or deleted IS NULL', false]    
+  end  
   
   scope_method = rails3 ? :scope : :named_scope
   send scope_method, :editable, :conditions => { :editable => true }

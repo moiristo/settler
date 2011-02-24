@@ -1,0 +1,5 @@
+Description:
+    Sets up Settler in your Rails project. It creates a migration and a Settler configuration file.
+    
+Examples:
+    `script/rails generate settler`

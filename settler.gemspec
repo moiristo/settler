@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{settler}
-  s.version = "1.2.0"
+  s.version = "1.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Reinier de Lange"]
-  s.date = %q{2010-10-27}
-  s.description = %q{This gem is a combination of the Squeegy's rails-settings and Binarylogic's settingslogic gem, meaning it reads its configuration from a YAML file, but stores all settings in the database as well for on the fly changes.}
+  s.date = %q{2011-02-24}
+  s.description = %q{Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well!}
   s.email = %q{r.j.delange@nedforce.nl}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -27,6 +27,11 @@ Gem::Specification.new do |s|
      "generators/settler/templates/migration.rb",
      "generators/settler/templates/settler.yml",
      "init.rb",
+     "lib/default_scope_patch.rb",
+     "lib/generators/settler/USAGE",
+     "lib/generators/settler/settler_generator.rb",
+     "lib/generators/settler/templates/migration.rb",
+     "lib/generators/settler/templates/settler.yml",
      "lib/hash_extension.rb",
      "lib/setting.rb",
      "lib/settler.rb",

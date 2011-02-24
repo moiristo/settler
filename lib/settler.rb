@@ -1,6 +1,8 @@
 require 'yaml'
 require 'erb'
 require 'hash_extension'
+require 'setting'
+require 'type_casters'
 
 # Settler loads and manages application wide settings and provides an interface for retrieving settings. The Settler
 # object cannot be instantiated; all functionality is available on class level.
