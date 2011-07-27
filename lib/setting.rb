@@ -7,7 +7,7 @@ class Setting < ActiveRecord::Base
   self.rails3 = defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::MAJOR >= 3  
 
   attr_readonly   :key
-  attr_protected  :editable, :deletable, :deleted  
+  attr_accessible :key, :alt, :value
   
   validates_presence_of :key  
   validate :setting_validations
