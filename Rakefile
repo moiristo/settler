@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "settler"
     gem.summary = %Q{Settler manages global application settings in Rails}
-    gem.description = %Q{This gem is a combination of the Squeegy's rails-settings and Binarylogic's settingslogic gem, meaning it reads its configuration from a YAML file, but stores all settings in the database as well for on the fly changes.}
+    gem.description = %Q{Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well!}
     gem.email = "r.j.delange@nedforce.nl"
     gem.homepage = "http://github.com/moiristo/settler"
     gem.authors = ["Reinier de Lange"]
