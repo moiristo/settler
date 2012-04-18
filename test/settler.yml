@@ -25,7 +25,15 @@ settings:
   integer_value:
     alt: An integer that should be typecasted
     value: 3
-    typecast: integer           
+    typecast: integer          
+  datetime_value:
+    alt: A datetime that should be typecasted
+    value: "2012-01-15"
+    typecast: datetime  
+  password_value:
+    alt: A password value that should be typecasted
+    value: '123456'
+    typecast: password            
   custom_value:
     alt: An integer that should be custom typecasted
     value: 1

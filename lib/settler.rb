@@ -8,7 +8,7 @@ require 'setting'
 # object cannot be instantiated; all functionality is available on class level.
 class Settler
   private_class_method :new
-  cattr_accessor  :config, :raise_missing, :report_missing  
+  cattr_accessor  :config, :raise_missing, :report_missing, :typecast_on_write, :password_secret
   cattr_writer    :namespace, :source
 
   class << self
@@ -20,7 +20,9 @@ class Settler
       self.config = config[namespace] if namespace
       self.config.each do  |key, attributes| 
         Setting.without_default_scope do 
-          setting = Setting.find_or_create_by_key(attributes.only(:alt, :value).merge(:key => key)) do |s|
+          setting = Setting.find_or_create_by_key(:key => key) do |s|
+             s.alt = attributes['alt']
+             s.value = attributes['value']             
              s.editable = attributes['editable']
              s.deletable = attributes['deletable']
           end

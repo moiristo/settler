@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'debugger'
 require 'test/unit'
 require 'pp'
 

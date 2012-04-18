@@ -9,7 +9,7 @@ class TestSettler < Test::Unit::TestCase
   end
     
   def test_should_load_settings
-    assert_equal ["bool_value", "custom_value", "float_value", "google_analytics_key", "integer_value", "search_algorithm"], Settler.settings(:order => :key) 
+    assert_equal ["bool_value", "custom_value", "datetime_value", "float_value", "google_analytics_key", "integer_value", "password_value", "search_algorithm"], Settler.settings(:order => :key) 
   end
   
   def test_should_find_setting_value
@@ -125,7 +125,8 @@ class TestSettler < Test::Unit::TestCase
     require 'custom_typecaster'
     assert_equal 3, Settler.integer_value.value
     assert_equal 0.25, Settler.float_value.value
-    assert_equal true, Settler.bool_value.value        
+    assert_equal true, Settler.bool_value.value  
+    assert_equal DateTime.civil(2012, 01, 15), Settler.datetime_value.value
     assert_equal 'custom value', Settler.custom_value.value                  
   end
   
@@ -146,6 +147,13 @@ class TestSettler < Test::Unit::TestCase
     assert_equal true, bool_setting.value    
     bool_setting.update_attribute(:value, 'tr')      
     assert_equal false, bool_setting.value        
+  end
+  
+  def test_password_typecaster  
+    password_value = Settler.password_value
+    assert_not_equal '123456', password_value.untypecasted_value  
+    assert_not_equal password_value.value, password_value.untypecasted_value      
+    assert_equal '123456', password_value.value        
   end
   
   def test_should_validate_format
@@ -171,6 +179,16 @@ class TestSettler < Test::Unit::TestCase
     assert Setting.deleted.include?(deleted_setting)
     deleted_setting.reset!
     assert !Setting.deleted.include?(deleted_setting)    
+  end
+  
+  def test_should_return_type
+    assert Settler.integer_value.type.integer?
+    assert Settler.float_value.type.float?
+    assert Settler.bool_value.type.boolean? 
+    assert Settler.password_value.type.password?   
+    assert Settler.datetime_value.type.datetime?
+    assert Settler.custom_value.type.string?
+    assert_equal 'string', Settler.search_algorithm.type    
   end
   
 end

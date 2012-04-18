@@ -31,6 +31,10 @@ class Setting < ActiveRecord::Base
     typecast.present? ? typecasted_value : super
   end
   
+  def value=(val)
+    typecaster.present? && typecaster.typecast_on_write? ? write_attribute(:value, typecaster.typecast_on_write(val)) : super
+  end
+  
   # Reads the raw, untypecasted value.
   def untypecasted_value
     read_attribute(:value)
@@ -44,6 +48,10 @@ class Setting < ActiveRecord::Base
   # Finds the typecast for this key in the settler configuration.
   def typecast
     @typecast ||= Settler.typecast_for(key)
+  end
+  
+  def type
+    @type ||= ActiveSupport::StringInquirer.new(typecaster.try(:type) || 'string')
   end
   
   # Returns all valid values for this setting, which is based on the presence of an inclusion validator.

@@ -36,6 +36,12 @@ Or install as a plugin if you must.  But gems are cooler.
 * You can manually set the configuration file source and default namespace as follows:
   - Settler.source = '/path/to/my/settler.yml'
   - Settler.namespace = 'staging'
+
+* Settings  
+  - Settler.typecast_on_write
+    should be set to true if you want values to be typecasted before they are written to the database.
+  - Settler.password_secret
+    can be used to set a custom secret for the 'password' typecaster
   
 == Configuration
 
@@ -95,7 +101,9 @@ will evaluate the GOOGLE_ANALYTICS_KEY constant.
 * The following 'typecasters' are available by default:
   * integer
   * float
+  * datetime
   * boolean
+  * password
 
   Note: the boolean typecaster will yield true when the value is '1','t' or 'true' (case ignored), false otherwise.
 
