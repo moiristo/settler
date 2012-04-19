@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{settler}
-  s.version = "1.2.2"
+  s.version = "1.2.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Reinier de Lange"]
-  s.date = %q{2011-07-27}
-  s.description = %q{This gem is a combination of the Squeegy's rails-settings and Binarylogic's settingslogic gem, meaning it reads its configuration from a YAML file, but stores all settings in the database as well for on the fly changes.}
+  s.date = %q{2012-04-19}
+  s.description = %q{Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well!}
   s.email = %q{r.j.delange@nedforce.nl}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -45,16 +45,23 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/moiristo/settler}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
+  s.rubygems_version = %q{1.5.3}
   s.summary = %q{Settler manages global application settings in Rails}
+  s.test_files = ["test/custom_typecaster.rb", "test/database.yml", "test/debug.log", "test/helper.rb", "test/schema.rb", "test/settler.yml", "test/test_settler.rb"]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_development_dependency(%q<sqlite3>, [">= 0"])
+      s.add_runtime_dependency(%q<rails>, [">= 0"])
     else
+      s.add_dependency(%q<sqlite3>, [">= 0"])
+      s.add_dependency(%q<rails>, [">= 0"])
     end
   else
+    s.add_dependency(%q<sqlite3>, [">= 0"])
+    s.add_dependency(%q<rails>, [">= 0"])
   end
 end
 
