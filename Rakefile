@@ -10,6 +10,9 @@ begin
     gem.email = "r.j.delange@nedforce.nl"
     gem.homepage = "http://github.com/moiristo/settler"
     gem.authors = ["Reinier de Lange"]
+    gem.test_files = Dir["test/**/*"]
+    gem.add_development_dependency 'sqlite3'       
+    gem.add_dependency 'rails'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

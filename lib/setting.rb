@@ -79,8 +79,8 @@ class Setting < ActiveRecord::Base
   end
   
   # Overrides the delete methods to ensure the default scope is not passed in the query
-  def delete;           Setting.without_default_scope{ super } end  
-  def self.delete_all;  Setting.without_default_scope{ super } end    
+  def delete *args;           Setting.without_default_scope{ super } end  
+  def self.delete_all *args;  Setting.without_default_scope{ super } end    
   
   # Resets this setting to the default stored in the settler configuration
   def reset!
