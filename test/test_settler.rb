@@ -7,9 +7,22 @@ class TestSettler < Test::Unit::TestCase
     Settler.namespace = 'settings'    
     Settler.load!
   end
+  
+  def test_should_not_crash_if_config_missing
+    Settler.source = File.dirname(__FILE__) + '/missing.yml'
+    Settler.namespace = 'settings'
+    
+    assert_nothing_raised do
+      Settler.load!
+    end
+  end  
     
   def test_should_load_settings
     assert_equal ["bool_value", "custom_value", "datetime_value", "float_value", "google_analytics_key", "integer_value", "password_value", "search_algorithm"], Settler.settings(:order => :key) 
+  end
+  
+  def test_should_return_setting_label
+    assert_equal 'Default search engine', Settler.search_algorithm.to_label
   end
   
   def test_should_find_setting_value

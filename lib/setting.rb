@@ -54,6 +54,10 @@ class Setting < ActiveRecord::Base
     @type ||= ActiveSupport::StringInquirer.new(typecaster.try(:type) || 'string')
   end
   
+  def to_label
+    alt.present? ? alt : key
+  end
+  
   # Returns all valid values for this setting, which is based on the presence of an inclusion validator.
   # Will return nil if no valid values could be determined.
   def valid_values

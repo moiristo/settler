@@ -16,8 +16,8 @@ class Settler
     def load!    
       raise "Source settler.yml not set. Please create one and set it by using Settler.source = <file>. When using Rails, please create a settler.yml file in the config directory." unless source
       
-      self.config = YAML.load(ERB.new(File.read(source)).result).to_hash
-      self.config = config[namespace] if namespace
+      self.config = File.exist?(source) ? YAML.load(ERB.new(File.read(source)).result).to_hash : {}
+      self.config = config[namespace] || {} if namespace
       self.config.each do  |key, attributes| 
         Setting.without_default_scope do 
           setting = Setting.find_or_create_by_key(:key => key) do |s|
