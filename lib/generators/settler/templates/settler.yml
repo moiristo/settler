@@ -1,26 +1,26 @@
 settings: &settings
   google_analytics_key: &google
-    alt: Google analytics key
+    label: Google analytics key
     value: 'UA-xxxxxx-x'
     editable: true
     deletable: false
     validations:
       presence: true
   search_algorithm:
-    alt: Default search engine
+    label: Default search engine
     value: 'ferret'
     editable: true
     validations:
       inclusion: [ 'ferret' , 'sphinx' ]
   white_list:
-    alt: 'White-listed words'
+    label: 'White-listed words'
     value: 'herp, derp'
 
 development:
   <<: *settings  
   google_analytics_key:
     <<: *google
-    alt: Development Google analytics key
+    label: Development Google analytics key
     value: 'UA-xxxxxx-1'
 
 test:

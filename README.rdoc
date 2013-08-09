@@ -1,5 +1,7 @@
 = Settler
 
+{<img src="https://travis-ci.org/moiristo/settler.png?branch=master" alt="Build Status" />}[https://travis-ci.org/moiristo/settler]
+
 Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well! 
 
 == Requirements

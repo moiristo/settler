@@ -1,5 +1,6 @@
 require 'rubygems'
-require 'rake'
+require 'bundler/setup'
+require 'appraisal'
 
 begin
   require 'jeweler'
@@ -10,9 +11,6 @@ begin
     gem.email = "r.j.delange@nedforce.nl"
     gem.homepage = "http://github.com/moiristo/settler"
     gem.authors = ["Reinier de Lange"]
-    gem.test_files = Dir["test/**/*"]
-    gem.add_development_dependency 'sqlite3'       
-    gem.add_dependency 'rails'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
@@ -26,21 +24,6 @@ Rake::TestTask.new(:test) do |test|
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end
-
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.pattern = 'test/**/test_*.rb'
-    test.verbose = true
-  end
-rescue LoadError
-  task :rcov do
-    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
-  end
-end
-
-task :test => :check_dependencies
 
 task :default => :test
 

@@ -1,8 +1,8 @@
-require 'helper'
+require 'test_helper'
 
 class TestSettler < Test::Unit::TestCase
   def setup
-    Setting.without_default_scope{ Setting.delete_all }
+    Setting.delete_all
     Settler.source = File.dirname(__FILE__) + '/settler.yml'
     Settler.namespace = 'settings'    
     Settler.load!
@@ -89,14 +89,14 @@ class TestSettler < Test::Unit::TestCase
   def test_should_not_update_uneditable_setting
     uneditable_setting = Settler.search_algorithm
     assert !uneditable_setting.update_attributes(:value => 'sphinx')
-    assert Setting.rails3 ? uneditable_setting.errors[:value].any? : uneditable_setting.errors.on(:value).present?
+    assert uneditable_setting.errors[:base].any?
     assert_equal 'ferret', Settler[:search_algorithm]
   end
   
   def test_should_manually_update_uneditable_setting
     uneditable_setting = Settler.search_algorithm
     assert uneditable_setting.update_attribute(:value, 'sphinx')
-    assert Setting.rails3 ? uneditable_setting.errors[:value].empty? : uneditable_setting.errors.on(:value).nil?
+    assert uneditable_setting.errors[:value].empty?
     assert_equal 'sphinx', Settler[:search_algorithm]
   end  
   
@@ -112,16 +112,10 @@ class TestSettler < Test::Unit::TestCase
     assert_equal 'google_analytics_key', setting.reload.key
   end
   
-  def test_should_not_update_protected_attributes
-    setting = Settler.google_analytics_key
-    assert setting.update_attributes(:key => 'new_key', :alt => 'new_alt', :value => 'UA-xxxxxx-1', :editable => false, :deletable => true, :deleted => true)
-    setting.reload
-    assert_equal 'google_analytics_key', setting.key
-    assert_equal 'new_alt', setting.alt         
-    assert_equal 'UA-xxxxxx-1', setting.value    
-    assert setting.editable?        
-    assert !setting.deletable?
-    assert_nil setting.deleted    
+  def test_should_not_update_uneditable_settings
+    setting = Settler.google_analytics_key    
+    assert !setting.update_attributes(:key => 'new_key', :label => 'new_label', :value => 'UA-xxxxxx-1', :editable => false, :deletable => true, :deleted => true)
+    assert setting.errors[:base].any?
   end
   
   def test_should_get_scopes

@@ -1,0 +1,7 @@
+= Changelog
+
+== v2.0.0
+
+* Dropped Rails 2 compatibility
+* Renamed 'alt' attribute to 'label'
+

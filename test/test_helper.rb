@@ -1,7 +1,7 @@
 require 'rubygems'
-#require 'debugger'
 require 'test/unit'
 require 'pp'
+# require 'debugger'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -10,6 +10,7 @@ gem "activerecord"
 require 'fileutils'
 require 'active_record'
 require 'active_support/core_ext/class/attribute_accessors'
+require 'active_support/buffered_logger'
 
 def load_schema
   config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))

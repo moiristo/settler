@@ -1,30 +1,21 @@
 require 'type_casters'
-require 'default_scope_patch' if defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::MAJOR >= 3
 
 # The Setting class is an AR model that encapsulates a Settler setting. The key if the setting is the only required attribute.\
 class Setting < ActiveRecord::Base  
-  cattr_accessor :rails3
-  self.rails3 = defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::MAJOR >= 3  
 
   attr_readonly   :key
-  attr_accessible :key, :alt, :value
-  
-  validates_presence_of :key  
-  validate :setting_validations
-  
+  attr_accessible :key, :label, :value if ActiveRecord::VERSION::MAJOR < 4
+
   serialize :value
   
-  if rails3 
-    validate(:ensure_editable, :on => :update)
-    default_scope lambda{ where(['deleted = ? or deleted IS NULL', false]) }
-  else 
-    validate_on_update(:ensure_editable) 
-    default_scope :conditions => ['deleted = ? or deleted IS NULL', false]    
-  end  
+  validates :key, :presence => true
+  validate  :setting_validations
+  validate  :ensure_editable, :on => :update  
+
+  default_scope { where(['deleted = ? or deleted IS NULL', false]) }
   
-  scope_method = rails3 ? :scope : :named_scope
-  send scope_method, :editable, :conditions => { :editable => true }
-  send scope_method, :deletable, :conditions => { :deletable => true }  
+  scope :editable, lambda{ where(:editable => true) }
+  scope :deletable, lambda{ where(:deletable => true) }
   
   # Returns the value, typecasted if a typecaster is available.
   def value
@@ -55,7 +46,7 @@ class Setting < ActiveRecord::Base
   end
   
   def to_label
-    alt.present? ? alt : key
+    label.present? ? label : key
   end
   
   # Returns all valid values for this setting, which is based on the presence of an inclusion validator.
@@ -75,7 +66,7 @@ class Setting < ActiveRecord::Base
   # Returns false if the setting could not be destroyed.
   def destroy    
     if deletable?       
-      self.deleted = true if Setting.update_all({ :deleted => true }, { :id => self })
+      self.deleted = true if Setting.where(:id => self).update_all(:deleted => true)
       deleted?
     else 
       false
@@ -83,28 +74,23 @@ class Setting < ActiveRecord::Base
   end
   
   # Overrides the delete methods to ensure the default scope is not passed in the query
-  def delete *args;           Setting.without_default_scope{ super } end  
-  def self.delete_all *args;  Setting.without_default_scope{ super } end    
+  def delete *args;           Setting.unscoped{ super } end  
+  def self.delete_all *args;  Setting.unscoped{ super } end    
   
   # Resets this setting to the default stored in the settler configuration
   def reset!
     defaults = Settler.config[self.key]
-    self.alt = defaults['alt']
+    self.label = defaults['label']
     self.value = defaults['value']
     self.editable = defaults['editable']
     self.deletable = defaults['deletable']    
     self.deleted = false    
-    rails3 ? save(:validate => false) : save(false)
-  end
-  
-  # Can be used to get *all* settings, including deleted settings.
-  def self.without_default_scope &block
-    Setting.with_exclusive_scope(&block)
+    save(:validate => false)
   end
   
   # Deleted scope is specified as a method as it needs to be an exclusive scope
   def self.deleted
-    Setting.without_default_scope{ Setting.all :conditions => { :deleted => true } }
+    unscoped { Setting.where(:deleted => true) }
   end 
   
 private
@@ -130,7 +116,7 @@ private
   
   # Ensures uneditable settings cannot be updated.
   def ensure_editable
-    errors.add(:value, I18n.t('settler.errors.editable', :default => 'cannot be changed')) if value_changed? && !editable? 
+    errors.add(:base, I18n.t('settler.errors.editable', :default => 'Setting cannot be changed')) if changed? && !editable? 
   end 
     
 end

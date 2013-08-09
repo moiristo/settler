@@ -1,6 +1,5 @@
 require 'yaml'
 require 'erb'
-require 'hash_extension'
 require 'type_casters'
 require 'setting'
 
@@ -19,9 +18,9 @@ class Settler
       self.config = File.exist?(source) ? YAML.load(ERB.new(File.read(source)).result).to_hash : {}
       self.config = config[namespace] || {} if namespace
       self.config.each do  |key, attributes| 
-        Setting.without_default_scope do 
-          setting = Setting.find_or_create_by_key(:key => key) do |s|
-             s.alt = attributes['alt']
+        Setting.unscoped do 
+          setting = Setting.where(:key => key).first || Setting.create(:key => key) do |s|
+             s.label = attributes['label']
              s.value = attributes['value']             
              s.editable = attributes['editable']
              s.deletable = attributes['deletable']
@@ -41,7 +40,7 @@ class Settler
     # Returns an array of all setting keys
     def settings(options = {})
       Settler.load! if config.nil?
-      Setting.all(:order => options[:order]).map(&:key)
+      Setting.order(options[:order]).pluck(:key)
     end  
     
     # Returns a list of validations to perform on a setting.
