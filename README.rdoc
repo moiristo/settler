@@ -6,28 +6,19 @@ Settler can be used for defining application wide settings in Rails. Settings ar
 
 == Requirements
 
-* Activerecord, tested with Rails 2.3.5, 2.3.8 & rails 3.
+* Activerecord >= 3.0 (tested with Rails 3.0, 3.2 and 4.0)
 
 == Installation
  
-Install the gem
+Add the gem to your Gemfile:
 
-  gem install settler
-
-And include the gem in your apps config
-
-  config.gem 'settler'
-
-Or install as a plugin if you must.  But gems are cooler.
-
-  ./script/plugin install git://github.com/moiristo/settler.git
+  gem 'settler'
 
 == Setup
 
 * You must create the table used by the Setting model and install an initial configuration file. Simply run this command:
   
-    rails2: ruby script/generate settler
-    rails3: rails g settler
+    rails g settler
 
 * This will create a migration and will add a settler.yml configuration file in your config directory. Now just migrate the database:
   
@@ -50,7 +41,7 @@ Or install as a plugin if you must.  But gems are cooler.
 The initial version of settler.yml contains example settings for every default Rails environment. A setting consists of at least a key and a value. Consider the following example:
 
     google_analytics_key: 
-      alt: Google analytics key
+      label: Google analytics key
       value: 'UA-xxxxxx-x'
       editable: true
       deletable: false
@@ -73,7 +64,7 @@ will evaluate the GOOGLE_ANALYTICS_KEY constant.
     >> Settler.google_analytics_key
     Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
     +----+----------------------+----------------------+------------+----------+-----------+
-    | id | key                  | alt                  | value      | editable | deletable |
+    | id | key                  | label                | value      | editable | deletable |
     +----+----------------------+----------------------+------------+----------+-----------+
     | 6  | google_analytics_key | Google analytics key | UA-xxxxx-x | true     | false     |
     +----+----------------------+----------------------+------------+----------+-----------+
@@ -94,7 +85,7 @@ will evaluate the GOOGLE_ANALYTICS_KEY constant.
 * Setting values can be typecasted to several types. This can easily be done by adding a 'typecast' property to the settler.yml. For example:
 
     float_value:
-      alt: A float that should be typecasted
+      label: A float that should be typecasted
       value: '0.25'
       typecast: float
   
@@ -120,7 +111,7 @@ will evaluate the GOOGLE_ANALYTICS_KEY constant.
 When you require this class in your application, you can easily use your typecaster by specifying its class name in the settler configuration:
 
     custom_value:
-      alt: An integer that should be custom typecasted
+      label: An integer that should be custom typecasted
       value: 1
       typecast: CustomTypecaster      
     
@@ -170,14 +161,14 @@ When you require this class in your application, you can easily use your typecas
 
     settings: &settings
       google_analytics_key: &google
-        alt: Google analytics key
+        label: Google analytics key
         value: 'UA-xxxxxx-x'
 
     development:
       <<: *settings  
       google_analytics_key:
         <<: *google
-        alt: Development Google analytics key
+        label: Development Google analytics key
         value: 'UA-xxxxxx-1'    
     
 * Report missing / raise missing
