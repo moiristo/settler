@@ -6,6 +6,7 @@ Settler can be used for defining application wide settings in Rails. Settings ar
 
 == Requirements
 
+* Ruby >= 1.9  (tested with Rails 1.9.2, 1.9.3 and 2.0.0)
 * Activerecord >= 3.0 (tested with Rails 3.0, 3.2 and 4.0)
 
 == Installation

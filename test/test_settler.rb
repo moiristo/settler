@@ -36,13 +36,7 @@ class TestSettler < Test::Unit::TestCase
   end
   
   def test_should_not_create_instance
-    if RUBY_VERSION.starts_with?("1.9")
-      assert_nil Settler.new
-    else      
-      assert_raise NoMethodError do
-        Settler.new
-      end
-    end
+    assert_nil Settler.new
   end
   
   def test_should_report_or_raise_missing    
