@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "settler"
-  s.version = "1.2.4"
+  s.version = "2.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Reinier de Lange"]
-  s.date = "2012-12-17"
+  s.date = "2013-08-09"
   s.description = "Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well!"
   s.email = "r.j.delange@nedforce.nl"
   s.extra_rdoc_files = [
@@ -18,50 +18,54 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
+    "Appraisals",
+    "CHANGELOG",
+    "Gemfile",
+    "Gemfile.lock",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "generators/settler/settler_generator.rb",
-    "generators/settler/templates/migration.rb",
-    "generators/settler/templates/settler.yml",
+    "gemfiles/3.0.gemfile",
+    "gemfiles/3.0.gemfile.lock",
+    "gemfiles/3.2.gemfile",
+    "gemfiles/3.2.gemfile.lock",
+    "gemfiles/4.0.gemfile",
+    "gemfiles/4.0.gemfile.lock",
     "init.rb",
-    "lib/default_scope_patch.rb",
     "lib/generators/settler/USAGE",
     "lib/generators/settler/settler_generator.rb",
     "lib/generators/settler/templates/migration.rb",
     "lib/generators/settler/templates/settler.yml",
-    "lib/hash_extension.rb",
     "lib/setting.rb",
     "lib/settler.rb",
     "lib/type_casters.rb",
     "settler.gemspec",
     "test/custom_typecaster.rb",
     "test/database.yml",
-    "test/helper.rb",
     "test/schema.rb",
     "test/settler.yml",
+    "test/test_helper.rb",
     "test/test_settler.rb"
   ]
   s.homepage = "http://github.com/moiristo/settler"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "2.0.6"
   s.summary = "Settler manages global application settings in Rails"
-  s.test_files = ["test/custom_typecaster.rb", "test/database.yml", "test/debug.log", "test/helper.rb", "test/schema.rb", "test/settler.yml", "test/test_settler.rb"]
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<sqlite3>, [">= 0"])
-      s.add_runtime_dependency(%q<rails>, [">= 0"])
+      s.add_runtime_dependency(%q<activerecord>, [">= 3.2"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 3.2"])
     else
-      s.add_dependency(%q<sqlite3>, [">= 0"])
-      s.add_dependency(%q<rails>, [">= 0"])
+      s.add_dependency(%q<activerecord>, [">= 3.2"])
+      s.add_dependency(%q<activesupport>, [">= 3.2"])
     end
   else
-    s.add_dependency(%q<sqlite3>, [">= 0"])
-    s.add_dependency(%q<rails>, [">= 0"])
+    s.add_dependency(%q<activerecord>, [">= 3.2"])
+    s.add_dependency(%q<activesupport>, [">= 3.2"])
   end
 end
 

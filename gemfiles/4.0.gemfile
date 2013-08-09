@@ -2,6 +2,9 @@
 
 source "http://rubygems.org"
 
+gem "appraisal", :group=>:test
+gem "jeweler", :group=>:test
+gem "sqlite3", :group=>:test
 gem "activerecord", "~> 4.0"
 gem "activesupport", "~> 4.0"
 

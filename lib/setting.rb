@@ -3,8 +3,7 @@ require 'type_casters'
 # The Setting class is an AR model that encapsulates a Settler setting. The key if the setting is the only required attribute.\
 class Setting < ActiveRecord::Base  
 
-  attr_readonly   :key
-  attr_accessible :key, :label, :value if ActiveRecord::VERSION::MAJOR < 4
+  attr_readonly :key
 
   serialize :value
   
