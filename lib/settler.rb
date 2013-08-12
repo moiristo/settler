@@ -17,8 +17,9 @@ class Settler
       
       self.config = File.exist?(source) ? YAML.load(ERB.new(File.read(source)).result).to_hash : {}
       self.config = config[namespace] || {} if namespace
-      self.config.each do  |key, attributes| 
-        Setting.unscoped do 
+
+      Setting.unscoped do
+        self.config.each do  |key, attributes| 
           setting = Setting.where(:key => key).first || Setting.create(:key => key) do |s|
              s.label = attributes['label']
              s.value = attributes['value']             
@@ -26,8 +27,9 @@ class Settler
              s.deletable = attributes['deletable']
           end
           p "[Settler] Validation failed for setting '#{setting.key}': #{setting.errors.full_messages.to_sentence}" if !setting.valid?
-        end 
+        end
       end
+      
       Setting.all.each{ |s| key = s.key; Settler.class.send(:define_method, key){ Setting.find_by_key(key) } }
     end    
     
@@ -40,7 +42,7 @@ class Settler
     # Returns an array of all setting keys
     def settings(options = {})
       Settler.load! if config.nil?
-      Setting.order(options[:order]).pluck(:key)
+      Setting.order(options[:order]).select(:key).map(&:key)
     end  
     
     # Returns a list of validations to perform on a setting.
