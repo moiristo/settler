@@ -2,7 +2,7 @@
 
 {<img src="https://travis-ci.org/moiristo/settler.png?branch=master" alt="Build Status" />}[https://travis-ci.org/moiristo/settler]
 
-Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well! 
+Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well!
 
 == Requirements
 
@@ -10,7 +10,7 @@ Settler can be used for defining application wide settings in Rails. Settings ar
 * Activerecord >= 3.1 (tested with Rails 3.1, 3.2 and 4.0)
 
 == Installation
- 
+
 Add the gem to your Gemfile:
 
   gem 'settler'
@@ -18,30 +18,30 @@ Add the gem to your Gemfile:
 == Setup
 
 * You must create the table used by the Setting model and install an initial configuration file. Simply run this command:
-  
+
     rails g settler
 
 * This will create a migration and will add a settler.yml configuration file in your config directory. Now just migrate the database:
-  
+
     rake db:migrate
-  
+
 * Next, you'll have to edit the settler.yml file, of which the details are described in the next section.
 
 * You can manually set the configuration file source and default namespace as follows:
   - Settler.source = '/path/to/my/settler.yml'
   - Settler.namespace = 'staging'
 
-* Settings  
+* Settings
   - Settler.typecast_on_write
     should be set to true if you want values to be typecasted before they are written to the database.
   - Settler.password_secret
     can be used to set a custom secret for the 'password' typecaster
-  
+
 == Configuration
 
 The initial version of settler.yml contains example settings for every default Rails environment. A setting consists of at least a key and a value. Consider the following example:
 
-    google_analytics_key: 
+    google_analytics_key:
       label: Google analytics key
       value: 'UA-xxxxxx-x'
       editable: true
@@ -49,11 +49,11 @@ The initial version of settler.yml contains example settings for every default R
       validations:
         presence: true
 
-In this case, 'google_analytics_key' is the key of the setting. Every nested property is either an attribute of the setting or a list of validations. Alt, value, editable and deletable are attributes of the Setting model. If a Setting with a given key does not exist, it is created with the attributes found. Therefore, you can consider these attributes as the default values for the setting. See the validations section for more info on validations. 
+In this case, 'google_analytics_key' is the key of the setting. Every nested property is either an attribute of the setting or a list of validations. Label, value, editable and deletable are attributes of the Setting model. If a Setting with a given key does not exist, it is created with the attributes found. Therefore, you can consider these attributes as the default values for the setting. See the validations section for more info on validations.
 
 Note that you can use ERB in the configuration file if you need to. For example:
 
-    google_analytics_key: 
+    google_analytics_key:
       value: '<%= GOOGLE_ANALYTICS_KEY %>'
 
 will evaluate the GOOGLE_ANALYTICS_KEY constant.
@@ -69,13 +69,13 @@ will evaluate the GOOGLE_ANALYTICS_KEY constant.
     +----+----------------------+----------------------+------------+----------+-----------+
     | 6  | google_analytics_key | Google analytics key | UA-xxxxx-x | true     | false     |
     +----+----------------------+----------------------+------------+----------+-----------+
-  
+
 * You can access a setting's value quickly by using the index operator:
 
     >> Settler[:google_analytics_key]
     Setting Load (0.7ms)   SELECT * FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
     => "UA-xxxxx-x"
-    
+
 * Some named scopes for finding setting are available that may be useful as well:
   * Setting.editable: returns all editable settings.
   * Setting.deletable: returns all deletable settings.
@@ -89,9 +89,9 @@ will evaluate the GOOGLE_ANALYTICS_KEY constant.
       label: A float that should be typecasted
       value: '0.25'
       typecast: float
-  
-  will ensure that the value returned by this setting will always be a float (0.25) instead if the string representation of a float. 
-  
+
+  will ensure that the value returned by this setting will always be a float (0.25) instead if the string representation of a float.
+
 * The following 'typecasters' are available by default:
   * integer
   * float
@@ -114,8 +114,8 @@ When you require this class in your application, you can easily use your typecas
     custom_value:
       label: An integer that should be custom typecasted
       value: 1
-      typecast: CustomTypecaster      
-    
+      typecast: CustomTypecaster
+
 == Validations
 
 * Validations are not stored in every setting, but are loaded on validation of a Setting instance. They apply to the value of the setting. The following validations can be created:
@@ -136,20 +136,20 @@ When you require this class in your application, you can easily use your typecas
     >> Settler.google_analytics_key.destroy
     Setting Load (0.7ms)   SELECT \* FROM "settings" WHERE ("settings"."key" = 'google_analytics_key') LIMIT 1
     => false
-    
+
 * As of version 1.2, settings can always be updated when using the update_attribute method. Before that version, a before_filter was used instead of a validation. Note that you can change the validation message for settings that cannot be changed by adding the key 'settler.errors.editable' to I18n. Defaults to: 'cannot be changed'.
 
-* Settings can be reset to the values defined in the configuration file by calling reset!: 
+* Settings can be reset to the values defined in the configuration file by calling reset!:
 
     >> Settler.google_analytics_key.reset!
     => true
 
   Note that this will always work regardless of the 'editable' attribute, so be careful when using this method!
-    
+
 * The Setting model performs a soft delete when it is destroyed, meaning the record is not really destroyed, but just marked as deleted. The reason for doing this is because settings are reloaded from the configuration file when your application is (re)started, unless a setting is already available in the database. Therefore, it should know about all deleted settings, otherwise it would re-insert the deleted setting. If you want to enforce this behaviour, use Setting#delete instead.
 
 == Advanced usage
-  
+
 * When you define an inclusion validation on a setting, you can access these values for use in web forms by calling 'valid_values' on the setting:
 
     >> Settler.search_algorithm.valid_values
@@ -166,14 +166,14 @@ When you require this class in your application, you can easily use your typecas
         value: 'UA-xxxxxx-x'
 
     development:
-      <<: *settings  
+      <<: *settings
       google_analytics_key:
         <<: *google
         label: Development Google analytics key
-        value: 'UA-xxxxxx-1'    
-    
+        value: 'UA-xxxxxx-1'
+
 * Report missing / raise missing
-  
+
   * You can tell Settler to report missing attributes:
 
       Settler.report_missing = true
@@ -185,7 +185,7 @@ When you require this class in your application, you can easily use your typecas
       Settler.raise_missing = true
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
