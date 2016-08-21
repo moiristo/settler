@@ -4,4 +4,3 @@
 
 * Dropped Rails 2 compatibility
 * Renamed 'alt' attribute to 'label'
-

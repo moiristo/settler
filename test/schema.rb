@@ -1,11 +1,11 @@
-ActiveRecord::Schema.define(:version => 0) do   
+ActiveRecord::Schema.define(:version => 0) do
   create_table :settings, :force => true do |t|
     t.string  :key, :null => false
     t.string  :label
     t.text    :value
     t.boolean :editable
     t.boolean :deletable
-    t.boolean :deleted      
-    t.timestamps
+    t.boolean :deleted
+    t.timestamps null: false
   end
 end
