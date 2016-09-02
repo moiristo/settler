@@ -5,10 +5,11 @@ require 'sqlite3'
 gem 'minitest'
 require 'minitest/autorun'
 
+MINITEST_CLASS = Gem.loaded_specs['minitest'].version.to_s.to_i < 5 ? MiniTest::Unit::TestCase : MiniTest::Test
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
-require 'active_model'
 require 'active_record'
 
 I18n.enforce_available_locales = true
@@ -34,4 +35,4 @@ end
 
 load_schema
 require File.dirname(__FILE__) + '/../init.rb'
-
+require 'custom_typecaster'

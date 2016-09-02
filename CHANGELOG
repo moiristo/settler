@@ -4,3 +4,12 @@
 
 * Dropped Rails 2 compatibility
 * Renamed 'alt' attribute to 'label'
+
+== v3.0.0
+
+* Support multiple ORMs
+* Removed dependency on ActiveSupport & ActiveRecord
+* Introduce abstract module Settler::AbstractSetting, which defines an interface for each ORM
+* Namespaced settler objects under module Settler
+  * The AR Setting is now class is now Settler::ORM::Activerecord::Setting
+  * Typecaster is now Settler::Typecaster

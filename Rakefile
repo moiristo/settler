@@ -6,8 +6,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "settler"
-    gem.summary = %Q{Settler manages global application settings in Rails}
-    gem.description = %Q{Settler can be used for defining application wide settings in Rails. Settings are loaded from a YAML file and stored in the database using ActiveRecord to allow users to update settings on the fly. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well!}
+    gem.summary = %Q{Settler manages global application settings in Ruby}
+    gem.description = %Q{Settler can be used for defining application wide settings in Ruby. Settings are loaded from a YAML file and optionally stored in a database. The YAML configuration allows you to not only specify defaults, but setting value validations and typecasts as well!}
     gem.email = "r.j.delange@nedforce.nl"
     gem.homepage = "http://github.com/moiristo/settler"
     gem.authors = ["Reinier de Lange"]
@@ -22,7 +22,7 @@ end
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
+  test.pattern = 'test/**/*_test.rb'
   test.verbose = true
 end
 
