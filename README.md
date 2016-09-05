@@ -35,7 +35,25 @@ Setting     => Settler::ORM::Activerecord::Setting
 Typecaster  => Settler::Typecaster
 ```  
 
-## Rails/Activerecord Setup
+## Setup
+
+### General
+
+* A settler.yml file is needed to load the settings configuration. You can set its location as follows:
+
+  ```ruby
+  Settler.source = '/path/to/my/settler.yml'
+  ```
+
+  By default, it will be set to `config/settler.yml` for Rails. The contents of this file are described in the section 'Configuration'.
+
+* A default YAML namespace can be set as follows:
+
+  ```ruby
+  Settler.namespace = 'staging'
+  ```
+
+### Rails/Activerecord
 
 * You must create the table used by the `Settler::ORM::Activerecord::Setting` model and install an initial
   configuration file. Simply run this command:
@@ -44,7 +62,7 @@ Typecaster  => Settler::Typecaster
   rails g settler
   ```
 
-* This will create a migration and will add a settler.yml configuration file
+* This will create a migration and add a settler.yml configuration file
   in your config directory. Now just migrate the database:
 
   ```bash
@@ -52,13 +70,10 @@ Typecaster  => Settler::Typecaster
   ```
 
 * Next, you'll have to edit the `settler.yml` file, of which the details are
-  described in the next section.
+  described in the Configuration section.
 
 * You can manually set the configuration file source and default namespace
-  as follows:
-  * `Settler.source = '/path/to/my/settler.yml'`
-  * `Settler.namespace = 'staging'`
-
+  as described above.
 
 ## Settings
 
@@ -129,11 +144,11 @@ will evaluate the `GOOGLE_ANALYTICS_KEY` constant.
   => "UA-xxxxx-x"
   ```
 
-* Some named scopes for finding setting are available that may be useful as
+* Activerecord only: some named scopes for finding setting are available that may be useful as
   well:
-  * `Setting.editable`: returns all editable settings.
-  * `Setting.deletable`: returns all deletable settings.
-  * `Setting.deleted`: returns all deleted settings.
+  * `Settler::ORM::Activerecord::Setting.editable`: returns all editable settings.
+  * `Settler::ORM::Activerecord::Setting.deletable`: returns all deletable settings.
+  * `Settler::ORM::Activerecord::Setting.deleted`: returns all deleted settings.
 
 
 ## Typecasting
@@ -184,6 +199,8 @@ typecaster by specifying its class name in the settler configuration:
 
 ## Validations
 
+### Activerecord
+
 * Validations are not stored in every setting, but are loaded on validation
   of a Setting instance. They apply to the value of the setting. The
   following validations can be created:
@@ -198,8 +215,10 @@ typecaster by specifying its class name in the settler configuration:
 
 ## Changing / Destroying settings
 
-* As settings are represented by a `Settler::Setting` ActiveRecord model, you can just
-  update and destroy them like you would update or destroy any AR model.
+Settings are represented by your ORM of choice. In the case of ActiveRecord, you can just
+update and destroy settings like you would update or destroy any AR model.
+
+### Activerecord
 
 * The `key` attribute is read only as it should never be changed through
   your application.
@@ -214,12 +233,6 @@ typecaster by specifying its class name in the settler configuration:
   => false
   ```
 
-* As of version 1.2, settings can always be updated when using the
-  update_attribute method. Before that version, a before_filter was used
-  instead of a validation. Note that you can change the validation message
-  for settings that cannot be changed by adding the key
-  `settler.errors.editable` to I18n. Defaults to: `'cannot be changed'`.
-
 * Settings can be reset to the values defined in the configuration file by
   calling reset!:
 
@@ -231,7 +244,7 @@ typecaster by specifying its class name in the settler configuration:
   Note that this will always work regardless of the `editable` attribute, so
   be careful when using this method!
 
-* The `Settler::Setting` model performs a soft delete when it is destroyed, meaning the
+* The `Settler::ORM::Activerecord::Setting` model performs a soft delete when it is destroyed, meaning the
   record is not really destroyed, but just marked as deleted. The reason for
   doing this is because settings are reloaded from the configuration file
   when your application is (re)started, unless a setting is already
@@ -239,6 +252,10 @@ typecaster by specifying its class name in the settler configuration:
   settings, otherwise it would re-insert the deleted setting. If you want to
   enforce this behaviour, use Setting#delete instead.
 
+### Ruby
+
+* The Ruby ORM just represents your YAML configuration as in-memory setting objects. You cannot edit or
+  destroy these settings.
 
 ## Advanced usage
 
