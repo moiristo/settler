@@ -9,6 +9,11 @@ allow users to update settings on the fly. The YAML configuration allows you
 to not only specify defaults, but setting value validations and typecasts as
 well!
 
+
+## NOTE
+
+Settler v3 has not been released yet! You can find the latest v2 release code and docs here: https://github.com/moiristo/settler/tree/a2ed5a5d9e6932aa7ae68a2c2d4c3eef2a10c608
+
 ## Requirements
 
 * Ruby 1.9.2, 1.9.3, 2.0.0, 2.1.5, 2.2.2, 2.3.0 (tested)
